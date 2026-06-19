@@ -38,3 +38,8 @@ def test_name_control_characters():
     result = runner.invoke(main, ["--name", "Injected\x1b[31mRed\x1b[0m"])
     assert result.exit_code != 0
     assert "control characters are not allowed" in result.output
+
+    # Test DEL character (0x7f) which was previously missed by (c < " ") check
+    result = runner.invoke(main, ["--name", "test\x7f"])
+    assert result.exit_code != 0
+    assert "control characters are not allowed" in result.output
