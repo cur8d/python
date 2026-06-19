@@ -104,12 +104,18 @@ def main(name: str, description: str, author: str, email: str, github: str):
 
     source = name.replace("-", "_").lower()
 
-    echo(f"\nProject Configuration:")
-    echo(f"  Name:        {name}")
-    echo(f"  Source:      {source}")
-    echo(f"  Description: {description}")
-    echo(f"  Author:      {author} <{email}>")
-    echo(f"  GitHub:      {github}\n")
+    secho("\nProject Configuration:", bold=True)
+
+    def print_field(label: str, value: str):
+        secho(f"  {label:<14}", nl=False, bold=True)
+        secho(value, fg="cyan")
+
+    print_field("Name:", name)
+    print_field("Source:", source)
+    print_field("Description:", description)
+    print_field("Author:", f"{author} <{email}>")
+    print_field("GitHub:", github)
+    echo()
 
     if not confirm("Do you want to proceed with these settings?", default=True):
         secho("Aborted! ❌", fg="red")
@@ -152,6 +158,16 @@ def main(name: str, description: str, author: str, email: str, github: str):
         secho(f"  Updated {filepath} ✅", fg="blue")
 
     secho("\nProject initialization complete! ✨", fg="green", bold=True)
+
+    secho("\nNext steps:", bold=True)
+    secho("  1. Install dependencies:     ", nl=False)
+    secho("mise run install", fg="cyan")
+    secho("  2. Run your new app:         ", nl=False)
+    secho("mise run app", fg="cyan")
+    secho("  3. View documentation:       ", nl=False)
+    secho("mise run local-docs", fg="cyan")
+    secho("  4. Explore the codebase in:  ", nl=False)
+    secho(f"./{source}\n", fg="cyan")
 
 
 if __name__ == "__main__":
