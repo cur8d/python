@@ -38,3 +38,7 @@ def test_name_control_characters():
     result = runner.invoke(main, ["--name", "Injected\x1b[31mRed\x1b[0m"])
     assert result.exit_code != 0
     assert "control characters are not allowed" in result.output
+
+    result = runner.invoke(main, ["--name", "test\x7f"])
+    assert result.exit_code != 0
+    assert "control characters are not allowed" in result.output

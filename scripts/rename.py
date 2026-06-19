@@ -78,7 +78,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
     ]:
         if len(value) > 100:
             raise UsageError(f"Invalid {label}: maximum length is 100 characters.")
-        if any(c < " " for c in value):
+        if any(not c.isprintable() for c in value):
             raise UsageError(f"Invalid {label}: control characters are not allowed.")
         if label != "description" and '"' in value:
             raise UsageError(f"Invalid {label}: double quotes are not allowed.")

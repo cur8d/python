@@ -25,7 +25,7 @@ def main(name: str = "World"):
     """
     if len(name) > 100:
         raise UsageError("Invalid name: maximum length is 100 characters.")
-    if any(c < " " for c in name):
+    if any(not c.isprintable() for c in name):
         raise UsageError("Invalid name: control characters are not allowed.")
 
     secho(f"Hello {name}! 👋", fg="green", bold=True)
