@@ -13,3 +13,9 @@ LICENSE
 
 .coverage
 coverage.xml
+
+# Secrets and credentials
+.env*
+*.key
+*.pem
+*.crt
