@@ -42,7 +42,7 @@ Click this button to create a new repository for your project, then clone the ne
 ### Initialize the project
 After cloning the repository, initialize the project by running:
 ```bash
-mise run project
+mise run init
 ```
 The script will interactively prompt you for the following details, with smart defaults based on your environment:
 
