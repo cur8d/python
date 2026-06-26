@@ -93,6 +93,5 @@ run = "app"
 
 [tasks.init]
 description = "Initialize project (run once)"
-alias = "p"
 run = "init"
 
