@@ -7,7 +7,7 @@ authors = [{name = "Amr Abed", email = ""}]
 license = {text = "MIT"}
 requires-python = ">=3.12"
 dependencies = [
-    "click>=8.1.8",
+    "click>=8.4.2",
 ]
 
 [project.scripts]
@@ -17,10 +17,10 @@ init = "scripts.init:main"
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.15.18",
-    "coverage>=7.14.1",
+    "ruff>=0.15.20",
+    "coverage>=7.14.3",
     "pre-commit>=4.0.1",
-    "pyright>=1.1.410",
+    "pyright>=1.1.411",
 ]
 docs = [
     "mkdocs>=1.6.1",
