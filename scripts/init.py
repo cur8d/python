@@ -98,9 +98,9 @@ def main(name: str, description: str, author: str, email: str, github: str):
     def toml_escape(s: str) -> str:
         return s.replace("\\", "\\\\").replace('"', '\\"')
 
-    description = toml_escape(description)
-    author = toml_escape(author)
-    email = toml_escape(email)
+    escaped_description = toml_escape(description)
+    escaped_author = toml_escape(author)
+    escaped_email = toml_escape(email)
 
     source = name.replace("-", "_").lower()
 
@@ -138,8 +138,8 @@ def main(name: str, description: str, author: str, email: str, github: str):
         ("pyproject.toml", r"^source = \[.*\]", f'source = ["{source}"]'),
         ("pyproject.toml", r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
         ("pyproject.toml", r'^name = ".*"', f'name = "{source}"'),
-        ("pyproject.toml", r'^description = ".*"', f'description = "{description}"'),
-        ("pyproject.toml", r"^authors = \[.*\]", f'authors = ["{author} <{email}>"]'),
+        ("pyproject.toml", r'^description = ".*"', f'description = "{escaped_description}"'),
+        ("pyproject.toml", r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
         ("docs/README.md", r"^# .*", f"# {description}"),
         (".github/CODEOWNERS", r"@.*", f"@{github}"),
         (".github/FUNDING.yml", r"^github: \[.*\]", f"github: [{github}]"),

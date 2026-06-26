@@ -85,6 +85,7 @@ mise run project --name "my-project" --description "My app" --author "Your Name"
 | Deploy docs to GitHub Pages | `mise run docs` | |
 | Setup dev environment | `mise run dev` | |
 | Full setup from scratch | `mise run all` | |
+| Initialize the project | `mise run init` | |
 
 > Refer to `docs/README.md` for the full list of available targets. Add new targets to `mise.toml` as needed.
 

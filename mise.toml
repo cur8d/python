@@ -91,10 +91,7 @@ description = "Run the app"
 alias = "a"
 run = "app"
 
-[tasks.rename]
-description = "Rename project (run once)"
-alias = "r"
-run = "rename"
+[tasks.init]
+description = "Initialize project (run once)"
+run = "init"
 
-[tasks.project]
-alias = ["rename", "p"]
