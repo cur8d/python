@@ -77,26 +77,22 @@ def main(name: str, description: str, author: str, email: str, github: str):
         ("github", github),
     ]:
         if len(value) > 100:
-            msg = f"Invalid {label}: maximum length is 100 characters."
-            raise UsageError(msg)
+            raise UsageError(f"Invalid {label}: maximum length is 100 characters.")
         if any(not c.isprintable() for c in value):
-            msg = f"Invalid {label}: control characters are not allowed."
-            raise UsageError(msg)
+            raise UsageError(f"Invalid {label}: control characters are not allowed.")
         if label != "description" and '"' in value:
-            msg = f"Invalid {label}: double quotes are not allowed."
-            raise UsageError(msg)
+            raise UsageError(f"Invalid {label}: double quotes are not allowed.")
 
     if not re.match(r"^[a-zA-Z0-9_-]+$", name):
-        msg = f"Invalid project name '{name}'. Only alphanumeric characters, dashes, and underscores are allowed."
-        raise UsageError(msg)
+        raise UsageError(
+            f"Invalid project name '{name}'. Only alphanumeric characters, dashes, and underscores are allowed."
+        )
 
     if not re.match(r"^[a-zA-Z0-9-]+$", github):
-        msg = f"Invalid GitHub username '{github}'. Only alphanumeric characters and dashes are allowed."
-        raise UsageError(msg)
+        raise UsageError(f"Invalid GitHub username '{github}'. Only alphanumeric characters and dashes are allowed.")
 
     if not re.match(r"^[^@]+@[^@]+\.[^@]+$", email):
-        msg = f"Invalid email address '{email}'."
-        raise UsageError(msg)
+        raise UsageError(f"Invalid email address '{email}'.")
 
     # Sanitize for TOML double-quoted strings (escape backslashes and double quotes)
     def toml_escape(s: str) -> str:
@@ -128,12 +124,11 @@ def main(name: str, description: str, author: str, email: str, github: str):
     secho(f"\nInitializing project '{name}'... 🚀", fg="green", bold=True)
 
     # 1. Rename project directory
-    if Path("project").is_dir():
+    if os.path.isdir("project"):
         shutil.move("project", source)
         secho(f"Renamed 'project' directory to '{source}'", fg="blue")
-    elif not Path(source).is_dir():
-        msg = f"Error: Neither 'project' nor '{source}' directory found."
-        raise ClickException(msg)
+    elif not os.path.isdir(source):
+        raise ClickException(f"Error: Neither 'project' nor '{source}' directory found.")
 
     # 2. File modifications
     replacements = [
@@ -142,10 +137,9 @@ def main(name: str, description: str, author: str, email: str, github: str):
         ("mkdocs.yml", r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
         ("pyproject.toml", r"^source = \[.*\]", f'source = ["{source}"]'),
         ("pyproject.toml", r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-        (f"project/app.py", r'version\("project"\)  # project-name', f'version("{source}")  # project-name'),
         ("pyproject.toml", r'^name = ".*"', f'name = "{source}"'),
         ("pyproject.toml", r'^description = ".*"', f'description = "{description}"'),
-        ("pyproject.toml", r"^authors = \[.*\]", f'authors = [{{name = "{author}", email = "{email}"}}]'),
+        ("pyproject.toml", r"^authors = \[.*\]", f'authors = ["{author} <{email}>"]'),
         ("docs/README.md", r"^# .*", f"# {description}"),
         (".github/CODEOWNERS", r"@.*", f"@{github}"),
         (".github/FUNDING.yml", r"^github: \[.*\]", f"github: [{github}]"),
@@ -159,8 +153,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
 
         content = path.read_text()
         # Use a lambda for replacement to avoid regex backreference injection
-        # Use a default argument to capture the current value of replacement
-        new_content = re.sub(pattern, lambda _, r=replacement: r, content, flags=re.MULTILINE)
+        new_content = re.sub(pattern, lambda _: replacement, content, flags=re.MULTILINE)
         path.write_text(new_content)
         secho(f"  Updated {filepath} ✅", fg="blue")
 
