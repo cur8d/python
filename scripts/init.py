@@ -9,8 +9,8 @@ from click import ClickException, UsageError, command, confirm, echo, option, se
 
 def _get_git_config(key: str) -> str:
     try:
-        return subprocess.check_output(["/usr/bin/git", "config", key], text=True).strip()  # noqa: S603
-    except (subprocess.CalledProcessError, FileNotFoundError):
+        return subprocess.check_output(["/usr/bin/git", "config", key], text=True, timeout=5).strip()  # noqa: S603
+    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
         return ""
 
 
@@ -23,14 +23,14 @@ def _get_default_github() -> str:
     # Try to extract from remote URL
     try:
         url = subprocess.check_output(  # noqa: S603
-            ["/usr/bin/git", "remote", "get-url", "origin"], text=True
+            ["/usr/bin/git", "remote", "get-url", "origin"], text=True, timeout=5
         ).strip()
         if "github.com" in url:
             if url.startswith("https"):
                 return url.split("/")[-2]
             if url.startswith("git@"):
                 return url.split(":")[-1].split("/")[0]
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
         pass
 
     return ""
@@ -124,10 +124,10 @@ def main(name: str, description: str, author: str, email: str, github: str):
     secho(f"\nInitializing project '{name}'... 🚀", fg="green", bold=True)
 
     # 1. Rename project directory
-    if os.path.isdir("project"):
+    if Path("project").is_dir():
         shutil.move("project", source)
         secho(f"Renamed 'project' directory to '{source}'", fg="blue")
-    elif not os.path.isdir(source):
+    elif not Path(source).is_dir():
         raise ClickException(f"Error: Neither 'project' nor '{source}' directory found.")
 
     # 2. File modifications
@@ -153,7 +153,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
 
         content = path.read_text()
         # Use a lambda for replacement to avoid regex backreference injection
-        new_content = re.sub(pattern, lambda _: replacement, content, flags=re.MULTILINE)
+        new_content = re.sub(pattern, lambda _, r=replacement: r, content, flags=re.MULTILINE)
         path.write_text(new_content)
         secho(f"  Updated {filepath} ✅", fg="blue")
 
