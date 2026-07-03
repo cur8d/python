@@ -30,7 +30,7 @@ def test_name_too_long():
     runner = CliRunner()
     result = runner.invoke(main, ["--name", "A" * 101])
     assert result.exit_code != 0
-    assert "maximum length is 100 characters" in result.output
+    assert "Name too long (101/100 characters)" in result.output
 
 
 def test_name_control_characters():

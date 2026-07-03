@@ -23,12 +23,16 @@ def main(name: str = "World"):
     Args:
       name: the name to be greeted
     """
+    name = name.strip() or "World"
+
     if len(name) > 100:
-        raise UsageError("Invalid name: maximum length is 100 characters.")
+        raise UsageError(f"Name too long ({len(name)}/100 characters). Please keep it under 100.")
     if any(not c.isprintable() for c in name):
         raise UsageError("Invalid name: control characters are not allowed.")
 
-    secho(f"Hello {name}! 👋", fg="green", bold=True)
+    secho("Hello ", nl=False)
+    secho(name, fg="cyan", bold=True, nl=False)
+    secho("! 👋", fg="green", bold=True)
 
 
 if __name__ == "__main__":
