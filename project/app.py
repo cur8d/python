@@ -23,6 +23,7 @@ def main(name: str = "World"):
     Args:
       name: the name to be greeted
     """
+    name = name.strip() or "World"
     if len(name) > 100:
         raise UsageError("Invalid name: maximum length is 100 characters.")
     if not name.isprintable():

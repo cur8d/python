@@ -26,6 +26,13 @@ def test_greet():
     assert "Hello Jules! 👋" in result.output
 
 
+def test_greet_whitespace():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--name", "   "])
+    assert result.exit_code == 0
+    assert "Hello World! 👋" in result.output
+
+
 def test_name_too_long():
     runner = CliRunner()
     result = runner.invoke(main, ["--name", "A" * 101])
