@@ -73,37 +73,31 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_author = toml_escape(author)
     escaped_email = toml_escape(email)
 
-    replacements = {
-        "docs/reference/app.md": [(r"^::: project\.app", f"::: {source}.app")],
-        "mkdocs.yml": [
-            (r"^repo_name: .*", f"repo_name: {github}/{name}"),
-            (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
-        ],
-        "pyproject.toml": [
-            (r"^source = \[.*\]", f'source = ["{source}"]'),
-            (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-            (r'^name = ".*"', f'name = "{source}"'),
-            (r'^description = ".*"', f'description = "{escaped_description}"'),
-            (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
-        ],
-        "docs/README.md": [(r"^# .*", f"# {description}")],
-        ".github/CODEOWNERS": [(r"@.*", f"@{github}")],
-        ".github/FUNDING.yml": [(r"^github: \[.*\]", f"github: [{github}]")],
-    }
+    replacements = [
+        ("docs/reference/app.md", [(r"^::: project\.app", f"::: {source}.app")]),
+        (
+            "mkdocs.yml",
+            [
+                (r"^repo_name: .*", f"repo_name: {github}/{name}"),
+                (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
+            ],
+        ),
+        (
+            "pyproject.toml",
+            [
+                (r"^source = \[.*\]", f'source = ["{source}"]'),
+                (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
+                (r'^name = ".*"', f'name = "{source}"'),
+                (r'^description = ".*"', f'description = "{escaped_description}"'),
+                (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
+            ],
+        ),
+        ("docs/README.md", [(r"^# .*", f"# {description}")]),
+        (".github/CODEOWNERS", [(r"@.*", f"@{github}")]),
+        (".github/FUNDING.yml", [(r"^github: \[.*\]", f"github: [{github}]")]),
+    ]
 
-    # Hardcoded list of files to process to satisfy security scanners
-    for filepath in [
-        "docs/reference/app.md",
-        "mkdocs.yml",
-        "pyproject.toml",
-        "docs/README.md",
-        ".github/CODEOWNERS",
-        ".github/FUNDING.yml",
-    ]:
-        file_replacements = replacements.get(filepath)
-        if not file_replacements:
-            continue
-
+    for filepath, file_replacements in replacements:
         path = Path(filepath)
         if not path.exists():
             secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
