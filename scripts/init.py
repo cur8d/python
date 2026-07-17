@@ -73,44 +73,111 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_author = toml_escape(author)
     escaped_email = toml_escape(email)
 
-    def update_file(path: Path, file_repls: list[tuple[str, str]]):
-        if not path.exists():
-            secho(f"  Warning: File {path} not found, skipping. ⚠️", fg="yellow")
-            return
-
-        content = path.read_text()
-        new_content = content
-        for pattern, replacement in file_repls:
-            # Use a lambda for replacement to avoid regex backreference injection
-            new_content = re.sub(pattern, lambda _, r=replacement: r, new_content, flags=re.MULTILINE)
-
+    # 1. Update docs/reference/app.md
+    path_ref = Path("docs/reference/app.md")
+    if path_ref.exists():
+        content = path_ref.read_text()
+        new_content = re.sub(r"^::: project\.app", lambda _, r=f"::: {source}.app": r, content, flags=re.MULTILINE)
         if new_content != content:
-            path.write_text(new_content)
-        secho(f"  Updated {path} ✅", fg="blue")
+            path_ref.write_text(new_content)
+        secho("  Updated docs/reference/app.md ✅", fg="blue")
+    else:
+        secho("  Warning: File docs/reference/app.md not found, skipping. ⚠️", fg="yellow")
 
-    update_file(Path("docs/reference/app.md"), [
-        (r"^::: project\.app", f"::: {source}.app"),
-    ])
-    update_file(Path("mkdocs.yml"), [
-        (r"^repo_name: .*", f"repo_name: {github}/{name}"),
-        (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
-    ])
-    update_file(Path("pyproject.toml"), [
-        (r"^source = \[.*\]", f'source = ["{source}"]'),
-        (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-        (r'^name = ".*"', f'name = "{source}"'),
-        (r'^description = ".*"', f'description = "{escaped_description}"'),
-        (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
-    ])
-    update_file(Path("docs/README.md"), [
-        (r"^# .*", f"# {description}"),
-    ])
-    update_file(Path(".github/CODEOWNERS"), [
-        (r"@.*", f"@{github}"),
-    ])
-    update_file(Path(".github/FUNDING.yml"), [
-        (r"^github: \[.*\]", f"github: [{github}]"),
-    ])
+    # 2. Update mkdocs.yml
+    path_mkdocs = Path("mkdocs.yml")
+    if path_mkdocs.exists():
+        content = path_mkdocs.read_text()
+        new_content = re.sub(
+            r"^repo_name: .*",
+            lambda _, r=f"repo_name: {github}/{name}": r,
+            content,
+            flags=re.MULTILINE,
+        )
+        new_content = re.sub(
+            r"^repo_url: .*",
+            lambda _, r=f"repo_url: https://github.com/{github}/{name}": r,
+            new_content,
+            flags=re.MULTILINE,
+        )
+        if new_content != content:
+            path_mkdocs.write_text(new_content)
+        secho("  Updated mkdocs.yml ✅", fg="blue")
+    else:
+        secho("  Warning: File mkdocs.yml not found, skipping. ⚠️", fg="yellow")
+
+    # 3. Update pyproject.toml
+    path_pyproject = Path("pyproject.toml")
+    if path_pyproject.exists():
+        content = path_pyproject.read_text()
+        new_content = re.sub(
+            r"^source = \[.*\]",
+            lambda _, r=f'source = ["{source}"]': r,
+            content,
+            flags=re.MULTILINE,
+        )
+        new_content = re.sub(
+            r'^app = "project\.app:main"',
+            lambda _, r=f'app = "{source}.app:main"': r,
+            new_content,
+            flags=re.MULTILINE,
+        )
+        new_content = re.sub(
+            r'^name = ".*"',
+            lambda _, r=f'name = "{source}"': r,
+            new_content,
+            flags=re.MULTILINE,
+        )
+        new_content = re.sub(
+            r'^description = ".*"',
+            lambda _, r=f'description = "{escaped_description}"': r,
+            new_content,
+            flags=re.MULTILINE,
+        )
+        new_content = re.sub(
+            r"^authors = \[.*\]",
+            lambda _, r=f'authors = ["{escaped_author} <{escaped_email}>"]': r,
+            new_content,
+            flags=re.MULTILINE,
+        )
+        if new_content != content:
+            path_pyproject.write_text(new_content)
+        secho("  Updated pyproject.toml ✅", fg="blue")
+    else:
+        secho("  Warning: File pyproject.toml not found, skipping. ⚠️", fg="yellow")
+
+    # 4. Update docs/README.md
+    path_readme = Path("docs/README.md")
+    if path_readme.exists():
+        content = path_readme.read_text()
+        new_content = re.sub(r"^# .*", lambda _, r=f"# {description}": r, content, flags=re.MULTILINE)
+        if new_content != content:
+            path_readme.write_text(new_content)
+        secho("  Updated docs/README.md ✅", fg="blue")
+    else:
+        secho("  Warning: File docs/README.md not found, skipping. ⚠️", fg="yellow")
+
+    # 5. Update .github/CODEOWNERS
+    path_owners = Path(".github/CODEOWNERS")
+    if path_owners.exists():
+        content = path_owners.read_text()
+        new_content = re.sub(r"@.*", lambda _, r=f"@{github}": r, content, flags=re.MULTILINE)
+        if new_content != content:
+            path_owners.write_text(new_content)
+        secho("  Updated .github/CODEOWNERS ✅", fg="blue")
+    else:
+        secho("  Warning: File .github/CODEOWNERS not found, skipping. ⚠️", fg="yellow")
+
+    # 6. Update .github/FUNDING.yml
+    path_funding = Path(".github/FUNDING.yml")
+    if path_funding.exists():
+        content = path_funding.read_text()
+        new_content = re.sub(r"^github: \[.*\]", lambda _, r=f"github: [{github}]": r, content, flags=re.MULTILINE)
+        if new_content != content:
+            path_funding.write_text(new_content)
+        secho("  Updated .github/FUNDING.yml ✅", fg="blue")
+    else:
+        secho("  Warning: File .github/FUNDING.yml not found, skipping. ⚠️", fg="yellow")
 
 
 @command(context_settings={"help_option_names": ["-h", "--help"]})
