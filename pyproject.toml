@@ -17,14 +17,14 @@ init = "scripts.init:main"
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.15.21",
-    "coverage>=7.15.0",
+    "ruff>=0.15.22",
+    "coverage>=7.15.2",
     "pre-commit>=4.0.1",
     "pyright>=1.1.411",
 ]
 docs = [
     "mkdocs>=1.6.1",
-    "mkdocstrings[python]>=1.0.5",
+    "mkdocstrings[python]>=1.0.6",
     "mkdocs-material>=9.6.20",
 ]
 
