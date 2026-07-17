@@ -47,7 +47,7 @@ def _validate_inputs(name: str, description: str, author: str, email: str, githu
     ]:
         if len(value) > 100:
             raise UsageError(f"Invalid {label}: maximum length is 100 characters.")
-        if any(not c.isprintable() for c in value):
+        if not value.isprintable():
             raise UsageError(f"Invalid {label}: control characters are not allowed.")
         if label != "description" and '"' in value:
             raise UsageError(f"Invalid {label}: double quotes are not allowed.")
@@ -87,16 +87,26 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
         (".github/FUNDING.yml", r"^github: \[.*\]", f"github: [{github}]"),
     ]
 
+    from collections import defaultdict
+
+    grouped_replacements = defaultdict(list)
     for filepath, pattern, replacement in replacements:
+        grouped_replacements[filepath].append((pattern, replacement))
+
+    for filepath, file_repls in grouped_replacements.items():
         path = Path(filepath)
         if not path.exists():
             secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
             continue
 
         content = path.read_text()
-        # Use a lambda for replacement to avoid regex backreference injection
-        new_content = re.sub(pattern, lambda _, r=replacement: r, content, flags=re.MULTILINE)
-        path.write_text(new_content)
+        new_content = content
+        for pattern, replacement in file_repls:
+            # Use a lambda for replacement to avoid regex backreference injection
+            new_content = re.sub(pattern, lambda _, r=replacement: r, new_content, flags=re.MULTILINE)
+
+        if new_content != content:
+            path.write_text(new_content)
         secho(f"  Updated {filepath} ✅", fg="blue")
 
 
