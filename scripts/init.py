@@ -73,10 +73,9 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_author = toml_escape(author)
     escaped_email = toml_escape(email)
 
-    def update_file(filepath: str, file_repls: list[tuple[str, str]]):
-        path = Path(filepath)
+    def update_file(path: Path, file_repls: list[tuple[str, str]]):
         if not path.exists():
-            secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
+            secho(f"  Warning: File {path} not found, skipping. ⚠️", fg="yellow")
             return
 
         content = path.read_text()
@@ -87,29 +86,29 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
 
         if new_content != content:
             path.write_text(new_content)
-        secho(f"  Updated {filepath} ✅", fg="blue")
+        secho(f"  Updated {path} ✅", fg="blue")
 
-    update_file("docs/reference/app.md", [
+    update_file(Path("docs/reference/app.md"), [
         (r"^::: project\.app", f"::: {source}.app"),
     ])
-    update_file("mkdocs.yml", [
+    update_file(Path("mkdocs.yml"), [
         (r"^repo_name: .*", f"repo_name: {github}/{name}"),
         (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
     ])
-    update_file("pyproject.toml", [
+    update_file(Path("pyproject.toml"), [
         (r"^source = \[.*\]", f'source = ["{source}"]'),
         (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
         (r'^name = ".*"', f'name = "{source}"'),
         (r'^description = ".*"', f'description = "{escaped_description}"'),
         (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
     ])
-    update_file("docs/README.md", [
+    update_file(Path("docs/README.md"), [
         (r"^# .*", f"# {description}"),
     ])
-    update_file(".github/CODEOWNERS", [
+    update_file(Path(".github/CODEOWNERS"), [
         (r"@.*", f"@{github}"),
     ])
-    update_file(".github/FUNDING.yml", [
+    update_file(Path(".github/FUNDING.yml"), [
         (r"^github: \[.*\]", f"github: [{github}]"),
     ])
 
