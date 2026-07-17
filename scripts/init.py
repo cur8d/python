@@ -6,6 +6,14 @@ from pathlib import Path
 
 from click import ClickException, UsageError, command, confirm, echo, option, secho
 
+# Static global paths for template file replacements
+APP_MD_PATH = Path("docs/reference/app.md")
+MKDOCS_PATH = Path("mkdocs.yml")
+PYPROJECT_PATH = Path("pyproject.toml")
+README_PATH = Path("docs/README.md")
+CODEOWNERS_PATH = Path(".github/CODEOWNERS")
+FUNDING_PATH = Path(".github/FUNDING.yml")
+
 
 def _get_git_config(key: str) -> str:
     try:
@@ -74,20 +82,18 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_email = toml_escape(email)
 
     # 1. Update docs/reference/app.md
-    path_ref = Path("docs/reference/app.md")
-    if path_ref.exists():
-        content = path_ref.read_text()
+    if APP_MD_PATH.exists():
+        content = APP_MD_PATH.read_text()
         new_content = re.sub(r"^::: project\.app", lambda _, r=f"::: {source}.app": r, content, flags=re.MULTILINE)
         if new_content != content:
-            path_ref.write_text(new_content)
+            APP_MD_PATH.write_text(new_content)
         secho("  Updated docs/reference/app.md ✅", fg="blue")
     else:
         secho("  Warning: File docs/reference/app.md not found, skipping. ⚠️", fg="yellow")
 
     # 2. Update mkdocs.yml
-    path_mkdocs = Path("mkdocs.yml")
-    if path_mkdocs.exists():
-        content = path_mkdocs.read_text()
+    if MKDOCS_PATH.exists():
+        content = MKDOCS_PATH.read_text()
         new_content = re.sub(
             r"^repo_name: .*",
             lambda _, r=f"repo_name: {github}/{name}": r,
@@ -101,15 +107,14 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
             flags=re.MULTILINE,
         )
         if new_content != content:
-            path_mkdocs.write_text(new_content)
+            MKDOCS_PATH.write_text(new_content)
         secho("  Updated mkdocs.yml ✅", fg="blue")
     else:
         secho("  Warning: File mkdocs.yml not found, skipping. ⚠️", fg="yellow")
 
     # 3. Update pyproject.toml
-    path_pyproject = Path("pyproject.toml")
-    if path_pyproject.exists():
-        content = path_pyproject.read_text()
+    if PYPROJECT_PATH.exists():
+        content = PYPROJECT_PATH.read_text()
         new_content = re.sub(
             r"^source = \[.*\]",
             lambda _, r=f'source = ["{source}"]': r,
@@ -141,40 +146,37 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
             flags=re.MULTILINE,
         )
         if new_content != content:
-            path_pyproject.write_text(new_content)
+            PYPROJECT_PATH.write_text(new_content)
         secho("  Updated pyproject.toml ✅", fg="blue")
     else:
         secho("  Warning: File pyproject.toml not found, skipping. ⚠️", fg="yellow")
 
     # 4. Update docs/README.md
-    path_readme = Path("docs/README.md")
-    if path_readme.exists():
-        content = path_readme.read_text()
+    if README_PATH.exists():
+        content = README_PATH.read_text()
         new_content = re.sub(r"^# .*", lambda _, r=f"# {description}": r, content, flags=re.MULTILINE)
         if new_content != content:
-            path_readme.write_text(new_content)
+            README_PATH.write_text(new_content)
         secho("  Updated docs/README.md ✅", fg="blue")
     else:
         secho("  Warning: File docs/README.md not found, skipping. ⚠️", fg="yellow")
 
     # 5. Update .github/CODEOWNERS
-    path_owners = Path(".github/CODEOWNERS")
-    if path_owners.exists():
-        content = path_owners.read_text()
+    if CODEOWNERS_PATH.exists():
+        content = CODEOWNERS_PATH.read_text()
         new_content = re.sub(r"@.*", lambda _, r=f"@{github}": r, content, flags=re.MULTILINE)
         if new_content != content:
-            path_owners.write_text(new_content)
+            CODEOWNERS_PATH.write_text(new_content)
         secho("  Updated .github/CODEOWNERS ✅", fg="blue")
     else:
         secho("  Warning: File .github/CODEOWNERS not found, skipping. ⚠️", fg="yellow")
 
     # 6. Update .github/FUNDING.yml
-    path_funding = Path(".github/FUNDING.yml")
-    if path_funding.exists():
-        content = path_funding.read_text()
+    if FUNDING_PATH.exists():
+        content = FUNDING_PATH.read_text()
         new_content = re.sub(r"^github: \[.*\]", lambda _, r=f"github: [{github}]": r, content, flags=re.MULTILINE)
         if new_content != content:
-            path_funding.write_text(new_content)
+            FUNDING_PATH.write_text(new_content)
         secho("  Updated .github/FUNDING.yml ✅", fg="blue")
     else:
         secho("  Warning: File .github/FUNDING.yml not found, skipping. ⚠️", fg="yellow")
