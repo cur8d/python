@@ -42,3 +42,27 @@ def test_name_control_characters():
     result = runner.invoke(main, ["--name", "test\x7f"])
     assert result.exit_code != 0
     assert "control characters are not allowed" in result.output
+
+
+def test_greet_trimming():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--name", "   Jules   "])
+    assert result.exit_code == 0
+    assert "Hello Jules! 👋" in result.output
+
+
+def test_greet_empty_fallback():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--name", ""])
+    assert result.exit_code == 0
+    assert "Hello World! 👋" in result.output
+
+    result = runner.invoke(main, ["--name", "   "])
+    assert result.exit_code == 0
+    assert "Hello World! 👋" in result.output
+
+
+if __name__ == "__main__":
+    from pytest import main
+
+    main()

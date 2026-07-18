@@ -47,7 +47,7 @@ def _validate_inputs(name: str, description: str, author: str, email: str, githu
     ]:
         if len(value) > 100:
             raise UsageError(f"Invalid {label}: maximum length is 100 characters.")
-        if any(not c.isprintable() for c in value):
+        if not value.isprintable():
             raise UsageError(f"Invalid {label}: control characters are not allowed.")
         if label != "description" and '"' in value:
             raise UsageError(f"Invalid {label}: double quotes are not allowed.")
@@ -73,31 +73,43 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_author = toml_escape(author)
     escaped_email = toml_escape(email)
 
-    replacements = [
-        ("docs/reference/app.md", r"^::: project\.app", f"::: {source}.app"),
-        ("mkdocs.yml", r"^repo_name: .*", f"repo_name: {github}/{name}"),
-        ("mkdocs.yml", r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
-        ("pyproject.toml", r"^source = \[.*\]", f'source = ["{source}"]'),
-        ("pyproject.toml", r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-        ("pyproject.toml", r'^name = ".*"', f'name = "{source}"'),
-        ("pyproject.toml", r'^description = ".*"', f'description = "{escaped_description}"'),
-        ("pyproject.toml", r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
-        ("docs/README.md", r"^# .*", f"# {description}"),
-        (".github/CODEOWNERS", r"@.*", f"@{github}"),
-        (".github/FUNDING.yml", r"^github: \[.*\]", f"github: [{github}]"),
-    ]
-
-    for filepath, pattern, replacement in replacements:
+    def update_file(filepath: str, file_replacements: list[tuple[str, str]]):
         path = Path(filepath)
         if not path.exists():
             secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
-            continue
+            return
 
         content = path.read_text()
-        # Use a lambda for replacement to avoid regex backreference injection
-        new_content = re.sub(pattern, lambda _, r=replacement: r, content, flags=re.MULTILINE)
-        path.write_text(new_content)
-        secho(f"  Updated {filepath} ✅", fg="blue")
+        new_content = content
+        for pattern, replacement in file_replacements:
+            # Use a lambda for replacement to avoid regex backreference injection
+            new_content = re.sub(pattern, lambda _, r=replacement: r, new_content, flags=re.MULTILINE)
+
+        if new_content != content:
+            path.write_text(new_content)
+            secho(f"  Updated {filepath} ✅", fg="blue")
+
+    update_file("docs/reference/app.md", [(r"^::: project\.app", f"::: {source}.app")])
+    update_file(
+        "mkdocs.yml",
+        [
+            (r"^repo_name: .*", f"repo_name: {github}/{name}"),
+            (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
+        ],
+    )
+    update_file(
+        "pyproject.toml",
+        [
+            (r"^source = \[.*\]", f'source = ["{source}"]'),
+            (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
+            (r'^name = ".*"', f'name = "{source}"'),
+            (r'^description = ".*"', f'description = "{escaped_description}"'),
+            (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
+        ],
+    )
+    update_file("docs/README.md", [(r"^# .*", f"# {description}")])
+    update_file(".github/CODEOWNERS", [(r"@.*", f"@{github}")])
+    update_file(".github/FUNDING.yml", [(r"^github: \[.*\]", f"github: [{github}]")])
 
 
 @command(context_settings={"help_option_names": ["-h", "--help"]})
