@@ -6,12 +6,35 @@ from pathlib import Path
 
 from click import ClickException, UsageError, command, confirm, echo, option, secho
 
+_GIT_CONFIG_CACHE: dict[str, str] = {}
+_GIT_CONFIG_LOADED = False
+
+
+def _load_git_config_cache():
+    global _GIT_CONFIG_LOADED
+    if _GIT_CONFIG_LOADED:
+        return
+    try:
+        # Query all relevant git configs in a single subprocess call to minimize overhead
+        output = subprocess.check_output(  # noqa: S603
+            ["/usr/bin/git", "config", "--get-regexp", r"^(user\.(name|email)|github\.user)$"],
+            text=True,
+            timeout=5,
+        )
+        for line in output.strip().splitlines():
+            if not line:
+                continue
+            parts = line.split(" ", 1)
+            if len(parts) == 2:
+                _GIT_CONFIG_CACHE[parts[0]] = parts[1]
+    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+    _GIT_CONFIG_LOADED = True
+
 
 def _get_git_config(key: str) -> str:
-    try:
-        return subprocess.check_output(["/usr/bin/git", "config", key], text=True, timeout=5).strip()  # noqa: S603
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
-        return ""
+    _load_git_config_cache()
+    return _GIT_CONFIG_CACHE.get(key, "")
 
 
 def _get_default_github() -> str:
