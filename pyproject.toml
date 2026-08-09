@@ -17,8 +17,8 @@ init = "scripts.init:main"
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff>=0.16.0",
-    "coverage>=7.15.2",
+    "ruff>=0.16.1",
+    "coverage>=7.15.3",
     "pre-commit>=4.6.1",
     "pyright>=1.1.411",
 ]
