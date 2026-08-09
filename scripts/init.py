@@ -1,16 +1,44 @@
 import os
 import re
 import shutil
-import subprocess
 from pathlib import Path
+from subprocess import CalledProcessError, TimeoutExpired, check_output
 
 from click import ClickException, UsageError, command, confirm, echo, option, secho
 
+_git_config_cache: dict[str, str] = {}
+_git_config_loaded = False
+GIT_BIN = "/usr/bin/git"
+
+
+def _load_git_config_cache():
+    global _git_config_loaded
+    if _git_config_loaded:
+        return
+    _git_config_loaded = True
+    try:
+        output = check_output(  # noqa: S603
+            [GIT_BIN, "config", "--get-regexp", r"^(user\.name|user\.email|github\.user)$"],
+            text=True,
+            timeout=5,
+        )
+        for line in output.splitlines():
+            line = line.strip()
+            if line:
+                key, _, value = line.partition(" ")
+                _git_config_cache[key] = value.strip()
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
+        pass
+
 
 def _get_git_config(key: str) -> str:
+    # Optimize config query by checking cache for common fields, reducing subprocess invocation overhead.
+    if key in ("user.name", "user.email", "github.user"):
+        _load_git_config_cache()
+        return _git_config_cache.get(key, "")
     try:
-        return subprocess.check_output(["/usr/bin/git", "config", key], text=True, timeout=5).strip()  # noqa: S603
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+        return check_output([GIT_BIN, "config", key], text=True, timeout=5).strip()  # noqa: S603
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
         return ""
 
 
@@ -22,15 +50,15 @@ def _get_default_github() -> str:
 
     # Try to extract from remote URL
     try:
-        url = subprocess.check_output(  # noqa: S603
-            ["/usr/bin/git", "remote", "get-url", "origin"], text=True, timeout=5
+        url = check_output(  # noqa: S603
+            [GIT_BIN, "remote", "get-url", "origin"], text=True, timeout=5
         ).strip()
         if "github.com" in url:
             if url.startswith("https"):
                 return url.split("/")[-2]
             if url.startswith("git@"):
                 return url.split(":")[-1].split("/")[0]
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
         pass
 
     return ""
