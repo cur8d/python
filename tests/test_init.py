@@ -1,5 +1,6 @@
 import subprocess
 
+from click import UsageError
 from pytest import main, raises
 
 from scripts.init import _get_default_github, _get_git_config, _validate_inputs
@@ -17,7 +18,7 @@ def test_validate_inputs_valid():
 
 
 def test_validate_inputs_invalid_name():
-    with raises(Exception) as excinfo:
+    with raises(UsageError) as excinfo:
         _validate_inputs(
             name="My Project!",  # Invalid character '!'
             description="A Python project template",
@@ -29,7 +30,7 @@ def test_validate_inputs_invalid_name():
 
 
 def test_validate_inputs_invalid_email():
-    with raises(Exception) as excinfo:
+    with raises(UsageError) as excinfo:
         _validate_inputs(
             name="my-project",
             description="A Python project template",
@@ -41,7 +42,7 @@ def test_validate_inputs_invalid_email():
 
 
 def test_validate_inputs_too_long():
-    with raises(Exception) as excinfo:
+    with raises(UsageError) as excinfo:
         _validate_inputs(
             name="my-project",
             description="A Python project template",

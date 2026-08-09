@@ -8,6 +8,7 @@ from click import ClickException, UsageError, command, confirm, echo, option, se
 
 _git_config_cache: dict[str, str] = {}
 _git_config_loaded = False
+GIT_BIN = "/usr/bin/git"
 
 
 def _load_git_config_cache():
@@ -17,7 +18,7 @@ def _load_git_config_cache():
     _git_config_loaded = True
     try:
         output = subprocess.check_output(  # noqa: S603
-            ["/usr/bin/git", "config", "--get-regexp", r"^(user\.name|user\.email|github\.user)$"],
+            [GIT_BIN, "config", "--get-regexp", r"^(user\.name|user\.email|github\.user)$"],
             text=True,
             timeout=5,
         )
@@ -36,7 +37,7 @@ def _get_git_config(key: str) -> str:
         _load_git_config_cache()
         return _git_config_cache.get(key, "")
     try:
-        return subprocess.check_output(["/usr/bin/git", "config", key], text=True, timeout=5).strip()  # noqa: S603
+        return subprocess.check_output([GIT_BIN, "config", key], text=True, timeout=5).strip()  # noqa: S603
     except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
         return ""
 
@@ -50,7 +51,7 @@ def _get_default_github() -> str:
     # Try to extract from remote URL
     try:
         url = subprocess.check_output(  # noqa: S603
-            ["/usr/bin/git", "remote", "get-url", "origin"], text=True, timeout=5
+            [GIT_BIN, "remote", "get-url", "origin"], text=True, timeout=5
         ).strip()
         if "github.com" in url:
             if url.startswith("https"):
