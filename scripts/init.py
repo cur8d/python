@@ -1,8 +1,8 @@
 import os
 import re
 import shutil
-import subprocess
 from pathlib import Path
+from subprocess import CalledProcessError, TimeoutExpired, check_output
 
 from click import ClickException, UsageError, command, confirm, echo, option, secho
 
@@ -17,7 +17,7 @@ def _load_git_config_cache():
         return
     _git_config_loaded = True
     try:
-        output = subprocess.check_output(  # noqa: S603
+        output = check_output(  # noqa: S603
             [GIT_BIN, "config", "--get-regexp", r"^(user\.name|user\.email|github\.user)$"],
             text=True,
             timeout=5,
@@ -27,7 +27,7 @@ def _load_git_config_cache():
             if line:
                 key, _, value = line.partition(" ")
                 _git_config_cache[key] = value.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
         pass
 
 
@@ -37,8 +37,8 @@ def _get_git_config(key: str) -> str:
         _load_git_config_cache()
         return _git_config_cache.get(key, "")
     try:
-        return subprocess.check_output([GIT_BIN, "config", key], text=True, timeout=5).strip()  # noqa: S603
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+        return check_output([GIT_BIN, "config", key], text=True, timeout=5).strip()  # noqa: S603
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
         return ""
 
 
@@ -50,7 +50,7 @@ def _get_default_github() -> str:
 
     # Try to extract from remote URL
     try:
-        url = subprocess.check_output(  # noqa: S603
+        url = check_output(  # noqa: S603
             [GIT_BIN, "remote", "get-url", "origin"], text=True, timeout=5
         ).strip()
         if "github.com" in url:
@@ -58,7 +58,7 @@ def _get_default_github() -> str:
                 return url.split("/")[-2]
             if url.startswith("git@"):
                 return url.split(":")[-1].split("/")[0]
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+    except (CalledProcessError, FileNotFoundError, TimeoutExpired):
         pass
 
     return ""

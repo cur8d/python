@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import CalledProcessError
 
 from click import UsageError
 from pytest import main, raises
@@ -66,10 +66,10 @@ def test_get_default_github(monkeypatch):
             return "git@github.com:test-user/test-repo.git"
         elif "config" in args:
             # Raise an error to force fallback to git remote
-            raise subprocess.CalledProcessError(1, args)
+            raise CalledProcessError(1, args)
         return ""
 
-    monkeypatch.setattr(subprocess, "check_output", mock_check_output)
+    monkeypatch.setattr("scripts.init.check_output", mock_check_output)
     github = _get_default_github()
     assert github in ("test-user", "google-labs-jules[bot]", "cur8d")
 
