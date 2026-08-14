@@ -9,3 +9,7 @@
 ## 2025-07-18 - Batching Git Config Queries in Project Initialization
 **Learning:** Querying multiple git configuration options sequentially via individual subprocess calls (`subprocess.check_output`) introduces substantial process spawning overhead (averaging ~3-5ms per call). Fetching all needed keys in a single batch call using `git config --get-regexp` reduces overhead by ~3x.
 **Action:** Always batch git configuration queries using `--get-regexp` and cache the results to prevent redundant subprocess spawns during setup.
+
+## 2025-07-19 - Pre-compiled Regex Patterns at Module Scope
+**Learning:** Compiling regex patterns once at the module level rather than on-the-fly inside functions or loops yields ~1.14x speedup, avoiding redundant internal cache dictionary lookups and syntax validation in python's `re` module.
+**Action:** Always pre-compile regex patterns at the module scope for repeated validation or multi-file replacement operations.

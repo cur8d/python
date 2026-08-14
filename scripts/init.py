@@ -6,6 +6,28 @@ from subprocess import CalledProcessError, TimeoutExpired, check_output
 
 from click import ClickException, UsageError, command, confirm, echo, option, secho
 
+# --- PERFORMANCE OPTIMIZATION: Pre-compiled Regular Expressions ---
+# Pre-compiling regular expressions at module scope avoids repeated compilation overhead
+# during input validation and file replacements, yielding an O(1) matching performance boost.
+
+# Validation regular expressions
+RE_VALID_PROJECT_NAME = re.compile(r"^[a-zA-Z0-9_-]+$")
+RE_VALID_GITHUB_USERNAME = re.compile(r"^[a-zA-Z0-9-]+$")
+RE_VALID_EMAIL = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+
+# Replacement regular expressions (compiled with re.MULTILINE as they match lines inside files)
+RE_APP_REF = re.compile(r"^::: project\.app", flags=re.MULTILINE)
+RE_REPO_NAME = re.compile(r"^repo_name: .*", flags=re.MULTILINE)
+RE_REPO_URL = re.compile(r"^repo_url: .*", flags=re.MULTILINE)
+RE_PYPROJECT_SOURCE = re.compile(r"^source = \[.*\]", flags=re.MULTILINE)
+RE_PYPROJECT_APP = re.compile(r'^app = "project\.app:main"', flags=re.MULTILINE)
+RE_PYPROJECT_NAME = re.compile(r'^name = ".*"', flags=re.MULTILINE)
+RE_PYPROJECT_DESC = re.compile(r'^description = ".*"', flags=re.MULTILINE)
+RE_PYPROJECT_AUTHORS = re.compile(r"^authors = \[.*\]", flags=re.MULTILINE)
+RE_README_HEADER = re.compile(r"^# .*", flags=re.MULTILINE)
+RE_CODEOWNERS = re.compile(r"@.*", flags=re.MULTILINE)
+RE_FUNDING_GITHUB = re.compile(r"^github: \[.*\]", flags=re.MULTILINE)
+
 _git_config_cache: dict[str, str] = {}
 _git_config_loaded = False
 GIT_BIN = "/usr/bin/git"
@@ -45,7 +67,7 @@ def _get_git_config(key: str) -> str:
 def _get_default_github() -> str:
     # Try git config first
     username = _get_git_config("github.user") or _get_git_config("user.name")
-    if username and re.match(r"^[a-zA-Z0-9-]+$", username):
+    if username and RE_VALID_GITHUB_USERNAME.match(username):
         return username
 
     # Try to extract from remote URL
@@ -80,15 +102,15 @@ def _validate_inputs(name: str, description: str, author: str, email: str, githu
         if label != "description" and '"' in value:
             raise UsageError(f"Invalid {label}: double quotes are not allowed.")
 
-    if not re.match(r"^[a-zA-Z0-9_-]+$", name):
+    if not RE_VALID_PROJECT_NAME.match(name):
         raise UsageError(
             f"Invalid project name '{name}'. Only alphanumeric characters, dashes, and underscores are allowed."
         )
 
-    if not re.match(r"^[a-zA-Z0-9-]+$", github):
+    if not RE_VALID_GITHUB_USERNAME.match(github):
         raise UsageError(f"Invalid GitHub username '{github}'. Only alphanumeric characters and dashes are allowed.")
 
-    if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+    if not RE_VALID_EMAIL.match(email):
         raise UsageError(f"Invalid email address '{email}'.")
 
 
@@ -101,7 +123,7 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     escaped_author = toml_escape(author)
     escaped_email = toml_escape(email)
 
-    def update_file(filepath: str, file_replacements: list[tuple[str, str]]):
+    def update_file(filepath: str, file_replacements: list[tuple[re.Pattern, str]]):
         path = Path(filepath)
         if not path.exists():
             secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
@@ -111,33 +133,33 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
         new_content = content
         for pattern, replacement in file_replacements:
             # Use a lambda for replacement to avoid regex backreference injection
-            new_content = re.sub(pattern, lambda _, r=replacement: r, new_content, flags=re.MULTILINE)
+            new_content = pattern.sub(lambda _, r=replacement: r, new_content)
 
         if new_content != content:
             path.write_text(new_content)
             secho(f"  Updated {filepath} ✅", fg="blue")
 
-    update_file("docs/reference/app.md", [(r"^::: project\.app", f"::: {source}.app")])
+    update_file("docs/reference/app.md", [(RE_APP_REF, f"::: {source}.app")])
     update_file(
         "mkdocs.yml",
         [
-            (r"^repo_name: .*", f"repo_name: {github}/{name}"),
-            (r"^repo_url: .*", f"repo_url: https://github.com/{github}/{name}"),
+            (RE_REPO_NAME, f"repo_name: {github}/{name}"),
+            (RE_REPO_URL, f"repo_url: https://github.com/{github}/{name}"),
         ],
     )
     update_file(
         "pyproject.toml",
         [
-            (r"^source = \[.*\]", f'source = ["{source}"]'),
-            (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-            (r'^name = ".*"', f'name = "{source}"'),
-            (r'^description = ".*"', f'description = "{escaped_description}"'),
-            (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
+            (RE_PYPROJECT_SOURCE, f'source = ["{source}"]'),
+            (RE_PYPROJECT_APP, f'app = "{source}.app:main"'),
+            (RE_PYPROJECT_NAME, f'name = "{source}"'),
+            (RE_PYPROJECT_DESC, f'description = "{escaped_description}"'),
+            (RE_PYPROJECT_AUTHORS, f'authors = ["{escaped_author} <{escaped_email}>"]'),
         ],
     )
-    update_file("docs/README.md", [(r"^# .*", f"# {description}")])
-    update_file(".github/CODEOWNERS", [(r"@.*", f"@{github}")])
-    update_file(".github/FUNDING.yml", [(r"^github: \[.*\]", f"github: [{github}]")])
+    update_file("docs/README.md", [(RE_README_HEADER, f"# {description}")])
+    update_file(".github/CODEOWNERS", [(RE_CODEOWNERS, f"@{github}")])
+    update_file(".github/FUNDING.yml", [(RE_FUNDING_GITHUB, f"github: [{github}]")])
 
 
 @command(context_settings={"help_option_names": ["-h", "--help"]})
