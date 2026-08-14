@@ -63,6 +63,6 @@ def test_greet_empty_fallback():
 
 
 if __name__ == "__main__":
-    from pytest import main
+    import pytest
 
-    main()
+    pytest.main()

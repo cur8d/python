@@ -132,7 +132,7 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
             (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
             (r'^name = ".*"', f'name = "{source}"'),
             (r'^description = ".*"', f'description = "{escaped_description}"'),
-            (r"^authors = \[.*\]", f'authors = ["{escaped_author} <{escaped_email}>"]'),
+            (r"^authors = \[.*\]", f'authors = [{{name = "{escaped_author}", email = "{escaped_email}"}}]'),
         ],
     )
     update_file("docs/README.md", [(r"^# .*", f"# {description}")])
