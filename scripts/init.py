@@ -10,6 +10,11 @@ _git_config_cache: dict[str, str] = {}
 _git_config_loaded = False
 GIT_BIN = "/usr/bin/git"
 
+# Pre-compile regular expressions at module level to avoid re-compilation overhead during input validation
+_RE_GITHUB_USER = re.compile(r"^[a-zA-Z0-9-]+$")
+_RE_PROJECT_NAME = re.compile(r"^[a-zA-Z0-9_-]+$")
+_RE_EMAIL = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+
 
 def _load_git_config_cache():
     global _git_config_loaded
@@ -45,7 +50,7 @@ def _get_git_config(key: str) -> str:
 def _get_default_github() -> str:
     # Try git config first
     username = _get_git_config("github.user") or _get_git_config("user.name")
-    if username and re.match(r"^[a-zA-Z0-9-]+$", username):
+    if username and _RE_GITHUB_USER.match(username):
         return username
 
     # Try to extract from remote URL
@@ -80,15 +85,15 @@ def _validate_inputs(name: str, description: str, author: str, email: str, githu
         if label != "description" and '"' in value:
             raise UsageError(f"Invalid {label}: double quotes are not allowed.")
 
-    if not re.match(r"^[a-zA-Z0-9_-]+$", name):
+    if not _RE_PROJECT_NAME.match(name):
         raise UsageError(
             f"Invalid project name '{name}'. Only alphanumeric characters, dashes, and underscores are allowed."
         )
 
-    if not re.match(r"^[a-zA-Z0-9-]+$", github):
+    if not _RE_GITHUB_USER.match(github):
         raise UsageError(f"Invalid GitHub username '{github}'. Only alphanumeric characters and dashes are allowed.")
 
-    if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+    if not _RE_EMAIL.match(email):
         raise UsageError(f"Invalid email address '{email}'.")
 
 
