@@ -150,19 +150,11 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     update_file(
         "pyproject.toml",
         [
-<<<<<<< HEAD
-            (r"^source = \[.*\]", f'source = ["{source}"]'),
-            (r'^app = "project\.app:main"', f'app = "{source}.app:main"'),
-            (r'^name = ".*"', f'name = "{source}"'),
-            (r'^description = ".*"', f'description = "{escaped_description}"'),
-            (r"^authors = \[.*\]", f'authors = [{{name = "{escaped_author}", email = "{escaped_email}"}}]'),
-=======
             (RE_PYPROJECT_SOURCE, f'source = ["{source}"]'),
             (RE_PYPROJECT_APP, f'app = "{source}.app:main"'),
             (RE_PYPROJECT_NAME, f'name = "{source}"'),
             (RE_PYPROJECT_DESC, f'description = "{escaped_description}"'),
-            (RE_PYPROJECT_AUTHORS, f'authors = [{name = "{escaped_author}", email = "{escaped_email}"}]'),
->>>>>>> 01863ca (perf: pre-compile regex patterns in init script)
+            (RE_PYPROJECT_AUTHORS, f'authors = [{{name = "{escaped_author}", email = "{escaped_email}"}}]'),
         ],
     )
     update_file("docs/README.md", [(RE_README_HEADER, f"# {description}")])

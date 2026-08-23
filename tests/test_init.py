@@ -147,7 +147,7 @@ def test_perform_replacements(tmp_path, monkeypatch):
     assert 'app = "my_new_source.app:main"' in pyproject_content
     assert 'name = "my_new_source"' in pyproject_content
     assert 'description = "New \\"escaped\\" Description"' in pyproject_content
-    assert 'authors = ["New Author <new@example.com>"]' in pyproject_content
+    assert 'authors = [{name = "New Author", email = "new@example.com"}]' in pyproject_content
 
     assert '# New "escaped" Description' in docs_readme.read_text()
     assert "@new-github" in codeowners.read_text()
