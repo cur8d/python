@@ -1,8 +1,8 @@
 # Stage 1: Build stage
 FROM python:3.14-alpine AS build
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Install uv (pinned to explicit version to mitigate supply chain and tag-spoofing risks)
+COPY --from=ghcr.io/astral-sh/uv:0.10.8 /uv /uvx /bin/
 
 # Enable bytecode compilation for faster startup
 ENV UV_COMPILE_BYTECODE=1
