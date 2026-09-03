@@ -53,3 +53,8 @@ omit = ["tests/*"]
 [tool.pyright]
 exclude = ["**/__pycache__", "**/.pytest_cache", ".venv"]
 reportMissingImports = "error"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
+
