@@ -10,14 +10,14 @@ A Python project template that comes out of the box with configuration for:
 - Command Line Interface (CLI) using [click](https://click.palletsprojects.com)
 - Testing using [pytest](https://pytest.org)
 - Code coverage using [coverage](https://coverage.readthedocs.io)
-- Fomatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff) 
+- Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff) 
 - Type checking using [pyright](https://microsoft.github.io/pyright)
 - Pre-commit validations using [pre-commit](https://pre-commit.com)
 - Workflow automation using [GitHub Actions](https://github.com/features/actions)
 - Automated dependency update using [Dependabot](https://docs.github.com/en/code-security/dependabot)
 - Dockerized development environment using [Dev containers](https://code.visualstudio.com/docs/devcontainers/containers)
 - Automatic documentation from code using [mkdocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
-- Documentation auto-deployment to [GiHub Pages](https://pages.github.com)
+- Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 - App container using [Docker](https://docker.com)
 
 
@@ -37,7 +37,7 @@ The repository also comes pre-loaded with these GitHub files:
 ## How to use
 Click this button to create a new repository for your project, then clone the new repository. Enjoy!
 
-[![Use this template]( https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/amrabed/python/generate)
+[![Use this template]( https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge)](https://github.com/cur8d/python/generate)
 
 ### Initialize the project
 After cloning the repository, initialize the project by running:
@@ -131,7 +131,7 @@ To generate and publish the project documentation to GitHub pages, run:
 mise run docs
 ```
 That pushes the new documentation to the gh-pages branch. 
-Make sure GitHub Pages is enableed in your repository settings and using the gh-pages branch for the documentation to be publicly available.
+Make sure GitHub Pages is enabled in your repository settings and using the gh-pages branch for the documentation to be publicly available.
 
 ### Local
 To serve the documentation on a local server, run:
@@ -156,7 +156,7 @@ mise run local-docs
 │   │   └── question.md             # Question template
 │   └── workflows                   # Github Actions Workflows
 │       ├── check.yml               # Workflow to validate code on push
-│       └── docs.yml                # Woukflow to publish documentation
+│       └── docs.yml                # Workflow to publish documentation
 ├── .gitignore                      # Git-ignored file list
 ├── .pre-commit-config.yaml         # Pre-commit configuration file
 ├── .vscode                         # VS code folder
@@ -167,7 +167,7 @@ mise run local-docs
 ├── LICENSE                         # Project license
 ├── mise.toml                       # Mise configuration and tasks
 ├── pyproject.toml                  # Configuration file for different tools
-├── docs                            # Documentaion folder
+├── docs                            # Documentation folder
 │   ├── mkdocs.yml                  # mkdocs configuration file
 │   ├── README.md                   # Read-me file & Documentation home page
 │   ├── CONTRIBUTING.md             # Contributing guidelines
@@ -177,7 +177,7 @@ mise run local-docs
 │   ├── __init__.py                 # Init file of the main package
 │   └── app.py                      # Main Python file of the project
 └── tests                           # Test folder
-    ├── __init__.py                 # Init file fo the test package
+    ├── __init__.py                 # Init file of the test package
     ├── conftest.py                 # Pytest configuration, and fixtures, and hooks
     └── test_app.py                 # Sample test file
 ```
