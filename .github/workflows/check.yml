@@ -18,7 +18,7 @@ jobs:
           - "3.12"
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: jdx/mise-action@500809d363d3fb4f307ee44f24ef3381a1792a7e # v2
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           tool_versions: |
             python ${{ matrix.python-version }}
