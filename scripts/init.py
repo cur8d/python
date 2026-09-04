@@ -125,9 +125,6 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
 
     def update_file(filepath: str, file_replacements: list[tuple[re.Pattern, str]]):
         path = Path(filepath)
-        # PERFORMANCE OPTIMIZATION: Use EAFP (try/except FileNotFoundError) instead of
-        # path.exists() followed by path.read_text(). This eliminates a redundant os.stat
-        # system call before every file read, yielding a ~13-18% speedup on file operations.
         try:
             content = path.read_text()
         except FileNotFoundError:
