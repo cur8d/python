@@ -125,11 +125,11 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
 
     def update_file(filepath: str, file_replacements: list[tuple[re.Pattern, str]]):
         path = Path(filepath)
-        if not path.exists():
+        try:
+            content = path.read_text()
+        except FileNotFoundError:
             secho(f"  Warning: File {filepath} not found, skipping. ⚠️", fg="yellow")
             return
-
-        content = path.read_text()
         new_content = content
         for pattern, replacement in file_replacements:
             # Use a lambda for replacement to avoid regex backreference injection
