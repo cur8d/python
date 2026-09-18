@@ -67,12 +67,16 @@ def test_get_git_config(monkeypatch):
 
 
 def test_get_default_github(monkeypatch):
+    # Clear lru_cache on _get_default_github before testing
+    init._get_default_github.cache_clear()
+
     # Case 1: valid username in git config
     monkeypatch.setattr(init, "_git_config_loaded", True)
     monkeypatch.setattr(init, "_git_config_cache", {"github.user": "jane-doe"})
     assert init._get_default_github() == "jane-doe"
 
     # Case 2: invalid username in git config, fallback to remote URL (HTTPS format)
+    init._get_default_github.cache_clear()
     monkeypatch.setattr(init, "_git_config_cache", {})
 
     def mock_check_output(args, **kwargs):
@@ -84,6 +88,8 @@ def test_get_default_github(monkeypatch):
     assert init._get_default_github() == "some-org"
 
     # Case 3: invalid username in git config, fallback to remote URL (SSH format)
+    init._get_default_github.cache_clear()
+
     def mock_check_output_ssh(args, **kwargs):
         if "remote" in args and "get-url" in args:
             return "git@github.com:ssh-user/some-repo.git\n"

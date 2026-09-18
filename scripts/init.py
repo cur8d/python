@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+from functools import lru_cache
 from pathlib import Path
 from subprocess import CalledProcessError, TimeoutExpired, check_output
 
@@ -64,6 +65,7 @@ def _get_git_config(key: str) -> str:
         return ""
 
 
+@lru_cache(maxsize=1)
 def _get_default_github() -> str:
     # Try git config first
     username = _get_git_config("github.user") or _get_git_config("user.name")
