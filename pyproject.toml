@@ -21,6 +21,7 @@ dev = [
     "coverage>=7.15.3",
     "pre-commit>=4.6.1",
     "pyright>=1.1.411",
+    "pip-audit>=2.10.1",
 ]
 docs = [
     "mkdocs>=1.6.1",
@@ -57,4 +58,3 @@ reportMissingImports = "error"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra -q"
-
