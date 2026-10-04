@@ -134,8 +134,6 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
             return
         new_content = content
         for pattern, replacement in file_replacements:
-            # Performance Optimization: Escape backslashes in replacement string so re.sub handles
-            # it directly in C without invoking a Python lambda function per match or risking Ruff B023.
             new_content = pattern.sub(replacement.replace("\\", "\\\\"), new_content)
 
         if new_content != content:
