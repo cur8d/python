@@ -134,8 +134,7 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
             return
         new_content = content
         for pattern, replacement in file_replacements:
-            # Use a lambda for replacement to avoid regex backreference injection
-            new_content = pattern.sub(lambda _, r=replacement: r, new_content)
+            new_content = pattern.sub(replacement.replace("\\", "\\\\"), new_content)
 
         if new_content != content:
             path.write_text(new_content)
