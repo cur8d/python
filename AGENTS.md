@@ -211,3 +211,25 @@ Every test file must end with:
 if __name__ == "__main__":
     main()
 ```
+
+---
+
+## Agent Skills
+
+This repository provides built-in modular skills following the open Agent Skills standard under `.agents/skills/`:
+
+| Skill | Purpose | Trigger / Usage |
+| :--- | :--- | :--- |
+| [`init-project`](.agents/skills/init-project/SKILL.md) | Initialize template into a standalone Python project | Initializing, bootstrapping, or configuring a new project from this repo |
+| [`add-module`](.agents/skills/add-module/SKILL.md) | Scaffold domain module with strict typing and pytest tests | Adding or creating a new Python module, model, or service |
+| [`add-cli-command`](.agents/skills/add-cli-command/SKILL.md) | Add Click CLI command with options and CliRunner tests | Adding or modifying CLI commands or scripts |
+| [`verify-and-fix`](.agents/skills/verify-and-fix/SKILL.md) | Automated verification (ruff, pyright, pytest) and auto-repair | Verifying, testing, linting, or fixing code quality issues |
+
+To discover or use skills with the `skills` CLI:
+```bash
+# List available skills
+npx skills add cur8d/python --list
+
+# Install skills to current project
+npx skills add cur8d/python
+```

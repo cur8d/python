@@ -10,7 +10,7 @@ A Python project template that comes out of the box with configuration for:
 - Command Line Interface (CLI) using [click](https://click.palletsprojects.com)
 - Testing using [pytest](https://pytest.org)
 - Code coverage using [coverage](https://coverage.readthedocs.io)
-- Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff) 
+- Formatting, import sorting, and linting using [ruff](https://docs.astral.sh/ruff)
 - Type checking using [pyright](https://microsoft.github.io/pyright)
 - Pre-commit validations using [pre-commit](https://pre-commit.com)
 - Workflow automation using [GitHub Actions](https://github.com/features/actions)
@@ -19,6 +19,7 @@ A Python project template that comes out of the box with configuration for:
 - Automatic documentation from code using [mkdocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
 - Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 - App container using [Docker](https://docker.com)
+- Built-in modular AI agent skills under `.agents/skills/` compatible with [skills.sh](https://skills.sh), Claude Code, Cursor, and Google Antigravity
 
 
 ### GitHub files
@@ -81,7 +82,7 @@ mise run update
 ```
 
 ### Install pre-commit hooks
-To install the pre-commit hooks for the project to format and lint your code automatically before commiting, run: 
+To install the pre-commit hooks for the project to format and lint your code automatically before commiting, run:
 ```bash
 mise run precommit
 ```
@@ -130,7 +131,7 @@ To generate and publish the project documentation to GitHub pages, run:
 ```bash
 mise run docs
 ```
-That pushes the new documentation to the gh-pages branch. 
+That pushes the new documentation to the gh-pages branch.
 Make sure GitHub Pages is enabled in your repository settings and using the gh-pages branch for the documentation to be publicly available.
 
 ### Local
