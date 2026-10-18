@@ -1,19 +1,22 @@
 # Implementation Plan: Agent Skills for cur8d Python
 
-Establish structured Agent Skills in `cur8d/python` so AI coding agents can reliably build, extend, test, and maintain modern Python projects adhering to `uv`, `ruff`, `pyright`, and `click`.
+Establish structured Agent Skills in `cur8d/python` so AI coding agents can reliably initialize projects from the template, build domain modules and CLI commands, and run automated verification and repair.
 
 ## Proposed Changes
 
 ### Skills Scaffolding
 
+#### [NEW] `.agents/skills/init-project/SKILL.md`
+- Instructions for customizing the template into a standalone Python project repository using `scripts/init.py`.
+
 #### [NEW] `.agents/skills/add-module/SKILL.md`
-- Provide actionable instructions for creating new domain modules, models, and services with type annotations, docstrings, and comprehensive pytest unit tests.
+- Instructions for creating new domain modules, models, and services with type annotations, docstrings, and comprehensive pytest unit tests.
 
 #### [NEW] `.agents/skills/add-cli-command/SKILL.md`
-- Provide instructions for adding CLI commands/subcommands via Click, registering entry points in `pyproject.toml`, and testing with `CliRunner`.
+- Instructions for adding CLI commands/subcommands via Click, registering entry points in `pyproject.toml`, and testing with `CliRunner`.
 
 #### [NEW] `.agents/skills/verify-and-fix/SKILL.md`
-- Provide automated diagnostic and remediation steps for linting (ruff), type checking (pyright), and testing (pytest).
+- Automated diagnostic and remediation steps for linting (ruff), type checking (pyright), and testing (pytest).
 
 ---
 

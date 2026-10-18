@@ -8,16 +8,18 @@ flowchart TD
     Agent --> Registry[".agents/skills/ Index"]
 
     subgraph Skills [".agents/skills/"]
-        M["add-module"]
-        C["add-cli-command"]
-        V["verify-and-fix"]
+        Init["init-project"]
+        Module["add-module"]
+        CLI["add-cli-command"]
+        Verify["verify-and-fix"]
     end
 
-    Registry --> M & C & V
+    Registry --> Init & Module & CLI & Verify
 
-    M -->|"Scaffolds"| Domain["project/<module>/<br/>tests/test_<module>.py"]
-    C -->|"Configures"| CLI["project/app.py<br/>pyproject.toml [project.scripts]"]
-    V -->|"Executes"| Tasks["mise run verify (ruff + pyright + pytest)"]
+    Init -->|"Executes"| Scripts["scripts/init.py<br/>pyproject.toml, mkdocs.yml"]
+    Module -->|"Scaffolds"| Domain["project/<module>/<br/>tests/test_<module>.py"]
+    CLI -->|"Configures"| Entry["project/app.py<br/>pyproject.toml [project.scripts]"]
+    Verify -->|"Executes"| Tasks["mise run verify (ruff + pyright + pytest)"]
 ```
 
 ## Directory Structure
@@ -28,6 +30,8 @@ Skills will be placed in `.agents/skills/` to ensure immediate compatibility wit
 python/
 ├── .agents/
 │   └── skills/
+│       ├── init-project/
+│       │   └── SKILL.md
 │       ├── add-module/
 │       │   └── SKILL.md
 │       ├── add-cli-command/
@@ -36,13 +40,29 @@ python/
 │           └── SKILL.md
 ├── project/
 ├── tests/
+├── scripts/
 ├── pyproject.toml
 └── mise.toml
 ```
 
 ## Skill Definitions
 
-### 1. `add-module`
+### 1. `init-project`
+- **Frontmatter**:
+  ```yaml
+  ---
+  name: init-project
+  description: Initializes and customizes a new Python project repository from the cur8d/python template. Use whenever asked to initialize, bootstrap, or fork this template into a new project.
+  category: system
+  tags: [scaffolding, template, init, python, cur8d]
+  ---
+  ```
+- **Rules**:
+  - Leverages `uv run python scripts/init.py` or interactive flags.
+  - Updates project names, descriptions, author info, and repository remotes.
+  - Runs `uv sync` to prepare virtual environment.
+
+### 2. `add-module`
 - **Frontmatter**:
   ```yaml
   ---
@@ -57,7 +77,7 @@ python/
   - Docstrings following Google/PEP 257 format.
   - Test suite in `tests/` verifying nominal cases, edge cases, and exception handling.
 
-### 2. `add-cli-command`
+### 3. `add-cli-command`
 - **Frontmatter**:
   ```yaml
   ---
@@ -72,7 +92,7 @@ python/
   - Registers entry points in `pyproject.toml` under `[project.scripts]`.
   - Scaffolds tests using `click.testing.CliRunner`.
 
-### 3. `verify-and-fix`
+### 4. `verify-and-fix`
 - **Frontmatter**:
   ```yaml
   ---
