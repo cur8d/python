@@ -41,7 +41,7 @@ uv run python scripts/init.py \
 The script will:
 - Rename `project/` to the sanitized project name (e.g., `my_service/`).
 - Update package metadata, scripts, and dependencies in `pyproject.toml`.
-- Update repository references in `mkdocs.yml`, `docs/README.md`, and `.github/CODEOWNERS`.
+- Update repository references in `zensical.toml`, `docs/README.md`, and `.github/CODEOWNERS`.
 - Remove `scripts/init.py` upon successful completion.
 
 ### 3. Sync Environment & Dependencies

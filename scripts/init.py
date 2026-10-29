@@ -18,8 +18,8 @@ RE_VALID_EMAIL = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
 # Replacement regular expressions (compiled with re.MULTILINE as they match lines inside files)
 RE_APP_REF = re.compile(r"^::: project\.app", flags=re.MULTILINE)
-RE_REPO_NAME = re.compile(r"^repo_name: .*", flags=re.MULTILINE)
-RE_REPO_URL = re.compile(r"^repo_url: .*", flags=re.MULTILINE)
+RE_REPO_NAME = re.compile(r"^(#\s*)?repo_name\s*[:=]\s*.*", flags=re.MULTILINE)
+RE_REPO_URL = re.compile(r"^(#\s*)?repo_url\s*[:=]\s*.*", flags=re.MULTILINE)
 RE_PYPROJECT_SOURCE = re.compile(r"^source = \[.*\]", flags=re.MULTILINE)
 RE_PYPROJECT_APP = re.compile(r'^app = "project\.app:main"', flags=re.MULTILINE)
 RE_PYPROJECT_NAME = re.compile(r'^name = ".*"', flags=re.MULTILINE)
@@ -142,10 +142,10 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
 
     update_file("docs/reference/app.md", [(RE_APP_REF, f"::: {source}.app")])
     update_file(
-        "mkdocs.yml",
+        "zensical.toml",
         [
-            (RE_REPO_NAME, f"repo_name: {github}/{name}"),
-            (RE_REPO_URL, f"repo_url: https://github.com/{github}/{name}"),
+            (RE_REPO_NAME, f'repo_name = "{github}/{name}"'),
+            (RE_REPO_URL, f'repo_url = "https://github.com/{github}/{name}"'),
         ],
     )
     update_file(
@@ -236,7 +236,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
     secho("  2. Run your new app:         ", nl=False)
     secho("mise run app", fg="cyan")
     secho("  3. View documentation:       ", nl=False)
-    secho("mise run local-docs", fg="cyan")
+    secho("mise run docs:serve", fg="cyan")
     secho("  4. Explore the codebase in:  ", nl=False)
     secho(f"./{source}\n", fg="cyan")
 

@@ -14,7 +14,7 @@ This is a **Python project template** that provides a pre-configured, production
 - **Linting, formatting & import sorting** via [ruff](https://docs.astral.sh/ruff)
 - **Type checking** via [pyright](https://microsoft.github.io/pyright)
 - **Pre-commit hooks** via [pre-commit](https://pre-commit.com)
-- **Documentation** via [MkDocs](https://www.mkdocs.org) with [mkdocstrings](https://mkdocstrings.github.io), auto-deployed to GitHub Pages
+- **Documentation** via [Zensical](https://zensical.org) with [mkdocstrings](https://mkdocstrings.github.io), auto-deployed to GitHub Pages
 - **CI/CD** via GitHub Actions
 - **Containerisation** via Docker and Dev Containers
 - **Environment & Task Management** via [mise](https://mise.jdx.dev)
@@ -40,7 +40,7 @@ This is a **Python project template** that provides a pre-configured, production
 ├── compose.yml                 # Docker Compose file
 ├── Dockerfile                  # App container
 ├── mise.toml                   # Workflow automation tasks
-├── mkdocs.yml                  # MkDocs configuration
+├── zensical.toml               # Zensical configuration
 ├── pyproject.toml              # Project metadata, dependencies, and tool configuration
 └── uv.lock                     # Locked dependency versions (do not edit manually)
 ```
@@ -81,8 +81,8 @@ mise run project --name "my-project" --description "My app" --author "Your Name"
 | Run tests with coverage | `mise run test` | `t` |
 | Run app locally | `mise run app` | `a` |
 | Run app in Docker | `docker compose run app` | |
-| Serve docs locally | `mise run local-docs` | `d` |
-| Deploy docs to GitHub Pages | `mise run docs` | |
+| Serve docs locally | `mise run docs:serve` | `d` |
+| Build documentation site | `mise run docs:build` | |
 | Setup dev environment | `mise run dev` | |
 | Full setup from scratch | `mise run all` | |
 | Initialize the project | `mise run init` | |
