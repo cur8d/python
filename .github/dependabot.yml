@@ -5,29 +5,30 @@
 # https://containers.dev/guide/dependabot
 
 version: 2
-
-multi-ecosystem-groups:
-  dependencies:
-    schedule:
-      interval: weekly
-      day: friday
-
 updates:
-  - package-ecosystem: "uv"
-    directory: "/"
-    versioning-strategy: increase-if-necessary
-    multi-ecosystem-group: "dependencies"
-    patterns:
-      - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    multi-ecosystem-group: "dependencies"
-    patterns:
-      - "*"
-
-  - package-ecosystem: "devcontainers"
-    directory: "/"
-    multi-ecosystem-group: "dependencies"
-    patterns:
-      - "*"
+ - package-ecosystem: "uv"
+   directory: "/"
+   schedule:
+     interval: weekly
+     day: friday
+   versioning-strategy: increase-if-necessary
+   groups:
+     dependencies:
+       applies-to: version-updates
+       patterns:
+         - "*"
+ - package-ecosystem: "github-actions"
+   directory: "/"
+   schedule:
+     interval: weekly
+     day: friday
+   groups:
+     github-actions:
+       applies-to: version-updates
+       patterns:
+         - "*"
+ - package-ecosystem: "devcontainers"
+   directory: "/"
+   schedule:
+     interval: weekly
+     day: friday
