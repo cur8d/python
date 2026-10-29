@@ -1,8 +1,8 @@
 [project]
 site_name = "Project Documentation"
-site_url = "https://github.com/amrabed/python-project-template"
-repo_url = "https://github.com/amrabed/python-project-template"
-repo_name = "amrabed/python-project-template"
+site_url = "https://github.com/cur8d/python"
+repo_url = "https://github.com/cur8d/python"
+repo_name = "cur8d/python"
 edit_uri = "edit/main/docs/"
 
 nav = [

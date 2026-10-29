@@ -18,6 +18,7 @@ RE_VALID_EMAIL = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
 # Replacement regular expressions (compiled with re.MULTILINE as they match lines inside files)
 RE_APP_REF = re.compile(r"^::: project\.app", flags=re.MULTILINE)
+RE_SITE_URL = re.compile(r"^(#\s*)?site_url\s*[:=]\s*.*", flags=re.MULTILINE)
 RE_REPO_NAME = re.compile(r"^(#\s*)?repo_name\s*[:=]\s*.*", flags=re.MULTILINE)
 RE_REPO_URL = re.compile(r"^(#\s*)?repo_url\s*[:=]\s*.*", flags=re.MULTILINE)
 RE_PYPROJECT_SOURCE = re.compile(r"^source = \[.*\]", flags=re.MULTILINE)
@@ -144,6 +145,7 @@ def _perform_replacements(source: str, github: str, name: str, description: str,
     update_file(
         "zensical.toml",
         [
+            (RE_SITE_URL, f'site_url = "https://github.com/{github}/{name}"'),
             (RE_REPO_NAME, f'repo_name = "{github}/{name}"'),
             (RE_REPO_URL, f'repo_url = "https://github.com/{github}/{name}"'),
         ],
