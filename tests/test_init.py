@@ -110,7 +110,11 @@ def test_perform_replacements(tmp_path, monkeypatch):
     app_md.write_text("::: project.app\nsome other content")
 
     zensical_toml = tmp_path / "zensical.toml"
-    zensical_toml.write_text('repo_name = "original/repo"\nrepo_url = "https://github.com/original/repo"\n')
+    zensical_toml.write_text(
+        'site_url = "https://github.com/original/repo"\n'
+        'repo_name = "original/repo"\n'
+        'repo_url = "https://github.com/original/repo"\n'
+    )
 
     pyproject_toml = tmp_path / "pyproject.toml"
     pyproject_toml.write_text(
@@ -145,6 +149,7 @@ def test_perform_replacements(tmp_path, monkeypatch):
 
     # Assertions to verify correct updates
     assert "::: my_new_source.app" in app_md.read_text()
+    assert 'site_url = "https://github.com/new-github/my-new-name"' in zensical_toml.read_text()
     assert 'repo_name = "new-github/my-new-name"' in zensical_toml.read_text()
     assert 'repo_url = "https://github.com/new-github/my-new-name"' in zensical_toml.read_text()
 
