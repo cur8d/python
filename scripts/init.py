@@ -236,7 +236,7 @@ def main(name: str, description: str, author: str, email: str, github: str):
     secho("  2. Run your new app:         ", nl=False)
     secho("mise run app", fg="cyan")
     secho("  3. View documentation:       ", nl=False)
-    secho("mise run local-docs", fg="cyan")
+    secho("mise run docs:serve", fg="cyan")
     secho("  4. Explore the codebase in:  ", nl=False)
     secho(f"./{source}\n", fg="cyan")
 

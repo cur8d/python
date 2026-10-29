@@ -81,8 +81,8 @@ mise run project --name "my-project" --description "My app" --author "Your Name"
 | Run tests with coverage | `mise run test` | `t` |
 | Run app locally | `mise run app` | `a` |
 | Run app in Docker | `docker compose run app` | |
-| Serve docs locally | `mise run local-docs` | `d` |
-| Build documentation site | `mise run docs` | |
+| Serve docs locally | `mise run docs:serve` | `d` |
+| Build documentation site | `mise run docs:build` | |
 | Setup dev environment | `mise run dev` | |
 | Full setup from scratch | `mise run all` | |
 | Initialize the project | `mise run init` | |

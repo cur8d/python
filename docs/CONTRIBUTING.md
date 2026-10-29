@@ -78,9 +78,9 @@ The project uses [Google-style docstrings](https://google.github.io/styleguide/p
 
 Project Documentation is written in Markdown and built using [Zensical](https://zensical.org/). API documentation is built from docstrings using [mkdocstrings](https://mkdocstrings.github.io/).
 
-To preview the docuementation on your local, run:
+To preview the documentation on your local, run:
 ```bash
-mise run local-docs
+mise run docs:serve
 ```
 
 ## Reporting Bugs

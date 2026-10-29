@@ -10,7 +10,7 @@ i = "mise run install"
 u = "mise run update"
 l = "mise run lint"
 t = "mise run test"
-d = "mise run local-docs"
+d = "mise run docs:serve"
 
 ll = "ls -l"
 la = "ls -a"
@@ -76,20 +76,20 @@ depends = ["install", "lint", "test"]
 
 ##### Docs #####
 
-[tasks.install-docs]
+[tasks."docs:install"]
 description = "Install documentation dependencies"
 run = "uv sync --group docs"
 hide = true
 
-[tasks.docs]
+[tasks."docs:build"]
 description = "Build documentation site"
-depends = ["install-docs"]
+depends = ["docs:install"]
 run = "zensical build --clean"
 
-[tasks.local-docs]
+[tasks."docs:serve"]
 description = "Serve documentation on a local server"
 alias = "d"
-depends = ["install-docs"]
+depends = ["docs:install"]
 run = "zensical serve"
 
 ###### Scripts ######

@@ -129,14 +129,14 @@ docker compose run app -h
 ## Generating documentation
 To build the project documentation, run:
 ```bash
-mise run docs
+mise run docs:build
 ```
 The documentation is automatically published to GitHub Pages via GitHub Actions on push to `main`.
 
 ### Local
 To serve the documentation on a local server, run:
 ```bash
-mise run local-docs
+mise run docs:serve
 ```
 
 ## Project Structure
