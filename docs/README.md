@@ -16,7 +16,7 @@ A Python project template that comes out of the box with configuration for:
 - Workflow automation using [GitHub Actions](https://github.com/features/actions)
 - Automated dependency update using [Dependabot](https://docs.github.com/en/code-security/dependabot)
 - Dockerized development environment using [Dev containers](https://code.visualstudio.com/docs/devcontainers/containers)
-- Automatic documentation from code using [mkdocs](https://www.mkdocs.org) and [mkdocstrings](https://mkdocstrings.github.io)
+- Automatic documentation from code using [Zensical](https://zensical.org) and [mkdocstrings](https://mkdocstrings.github.io)
 - Documentation auto-deployment to [GitHub Pages](https://pages.github.com)
 - App container using [Docker](https://docker.com)
 - Built-in modular AI agent skills under `.agents/skills/` compatible with [skills.sh](https://skills.sh), Claude Code, Cursor, and Google Antigravity
@@ -127,12 +127,11 @@ docker compose run app -h
 ```
 
 ## Generating documentation
-To generate and publish the project documentation to GitHub pages, run:
+To build the project documentation, run:
 ```bash
 mise run docs
 ```
-That pushes the new documentation to the gh-pages branch.
-Make sure GitHub Pages is enabled in your repository settings and using the gh-pages branch for the documentation to be publicly available.
+The documentation is automatically published to GitHub Pages via GitHub Actions on push to `main`.
 
 ### Local
 To serve the documentation on a local server, run:
@@ -168,8 +167,8 @@ mise run local-docs
 ├── LICENSE                         # Project license
 ├── mise.toml                       # Mise configuration and tasks
 ├── pyproject.toml                  # Configuration file for different tools
+├── zensical.toml                   # Zensical configuration file
 ├── docs                            # Documentation folder
-│   ├── mkdocs.yml                  # mkdocs configuration file
 │   ├── README.md                   # Read-me file & Documentation home page
 │   ├── CONTRIBUTING.md             # Contributing guidelines
 │   └── reference                   # Reference section

@@ -16,7 +16,7 @@ flowchart TD
 
     Registry --> Init & Module & CLI & Verify
 
-    Init -->|"Executes"| Scripts["scripts/init.py<br/>pyproject.toml, mkdocs.yml"]
+    Init -->|"Executes"| Scripts["scripts/init.py<br/>pyproject.toml, zensical.toml"]
     Module -->|"Scaffolds"| Domain["project/<module>/<br/>tests/test_<module>.py"]
     CLI -->|"Configures"| Entry["project/app.py<br/>pyproject.toml [project.scripts]"]
     Verify -->|"Executes"| Tasks["mise run verify (ruff + pyright + pytest)"]

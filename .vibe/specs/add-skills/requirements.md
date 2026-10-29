@@ -18,7 +18,7 @@ Equip the `cur8d/python` repository with modular Agent Skills following the open
    - Location: `.agents/skills/init-project/SKILL.md`
    - Guides the agent through customizing the template into a standalone repository.
    - Executes `uv run python scripts/init.py` (with flags `--project-name`, `--description`, `--author` or interactive prompts).
-   - Replaces placeholders in `pyproject.toml`, `mkdocs.yml`, `docs/README.md`, and renames the `project/` directory if needed.
+   - Replaces placeholders in `pyproject.toml`, `zensical.toml`, `docs/README.md`, and renames the `project/` directory if needed.
    - Resets git tracking and installs fresh dependencies using `uv sync`.
 
 2. **`add-module` Skill**:

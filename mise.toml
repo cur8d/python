@@ -82,15 +82,15 @@ run = "uv sync --group docs"
 hide = true
 
 [tasks.docs]
-description = "Build and deploy documentation to GitHub pages"
+description = "Build documentation site"
 depends = ["install-docs"]
-run = "mkdocs gh-deploy --force"
+run = "zensical build --clean"
 
 [tasks.local-docs]
 description = "Serve documentation on a local server"
 alias = "d"
 depends = ["install-docs"]
-run = "mkdocs serve"
+run = "zensical serve"
 
 ###### Scripts ######
 
