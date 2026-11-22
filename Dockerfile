@@ -11,7 +11,7 @@ WORKDIR /code
 
 # Install dependencies first to leverage Docker layer caching
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-install-project --no-dev
+RUN uv sync --frozen --no-install-project --no-dev --no-build
 
 # Install the project itself
 COPY . .
